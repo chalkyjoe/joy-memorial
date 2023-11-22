@@ -1,0 +1,45 @@
+﻿@using joy_database.Repositories
+@using joy_database.Models
+@using Ganss.Xss
+@page "/admin"
+@inject StoryRepository StoryRepository
+
+<h3>Story Feed</h3>
+
+@foreach (var story in stories)
+{
+    <div class="story">
+        <div class="story-header">
+            <strong>@story.Name</strong>
+        </div>
+        <div class="story-text">
+            <button class="btn-approve btn-success" @onclick="() => Approve(story)">✅</button>
+            @((MarkupString)new HtmlSanitizer().Sanitize(story.Text))
+            @foreach (var media in story.Media)
+            {
+                <img src="@media.Filename" height="300" width="300"/>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private List<Story> stories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetStories();
+    }
+
+    private async Task GetStories()
+    {
+        stories = await StoryRepository.GetAllUnApproved();
+    }
+
+    private async Task Approve(Story story)
+    {
+        await StoryRepository.Approve(story);
+        await GetStories();
+    }
+
+}
