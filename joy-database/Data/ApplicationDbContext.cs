@@ -7,6 +7,8 @@ namespace joy_database.Data;
 public class ApplicationDbContext : IdentityDbContext
 {
     public DbSet<Story> Stories { get; set; }
+    public DbSet<Media> Media { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {

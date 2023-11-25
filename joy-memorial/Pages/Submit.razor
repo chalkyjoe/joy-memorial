@@ -6,78 +6,80 @@
 @inject StoryRepository _storyRepository
 
 
-<h3>Blazor Form Example</h3>
+<h3>Submit a story.</h3>
 
 @if (formSubmitted)
 {
-    <p>Form submitted successfully!</p>
+    <p>Story submitted successfully!</p>
 }
+else
+{
 
-<EditForm Model="@formData" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator/>
+    <EditForm Model="@formData" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator/>
 
-    <div class="form-group">
-        <label for="Name">Name:</label>
-        <InputText id="Name" @bind-Value="@formData.Name" class="form-control"/>
-        <ValidationMessage For="@(() => formData.Name)"/>
-    </div>
+        <div class="form-group">
+            <label for="Name">Name:</label>
+            <InputText id="Name" @bind-Value="@formData.Name" class="form-control"/>
+            <ValidationMessage For="@(() => formData.Name)"/>
+        </div>
 
-    <div class="form-group">
-        <label for="Text">Text:</label>
-        <BlazoredTextEditor @ref="@QuillHtml">
-            <ToolbarContent>
-                <select class="ql-header">
-                    <option selected=""></option>
-                    <option value="1"></option>
-                    <option value="2"></option>
-                    <option value="3"></option>
-                    <option value="4"></option>
-                    <option value="5"></option>
-                </select>
-                <span class="ql-formats">
-                    <button class="ql-bold"></button>
-                    <button class="ql-italic"></button>
-                    <button class="ql-underline"></button>
-                    <button class="ql-strike"></button>
-                </span>
-                <span class="ql-formats">
-                    <select class="ql-color"></select>
-                    <select class="ql-background"></select>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-list" value="ordered"></button>
-                    <button class="ql-list" value="bullet"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-link"></button>
-                </span>
-            </ToolbarContent>
-            <EditorContent>
-            </EditorContent>
-        </BlazoredTextEditor>
-        <ValidationMessage For="@(() => formData.Text)"/>
-    </div>
-    <div>
-        Upload video:
-        <InputFile accept=".mp4,.mpeg,.avi,.mov,.wmv" multiple="true" OnChange="VideosUpload"></InputFile>
-    </div>
-    <div>
-        Upload image:
-        <InputFile accept=".jpg,.jpeg,.png,.gif,.bmp" multiple="true" OnChange="ImagesUpload"></InputFile>
-    </div>
-    <button type="button" class="btn btn-primary" @onclick="() => HandleValidSubmit()" disabled="@isSubmitting">
-        @if (isSubmitting)
-        {
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            <p>Submitting...</p>
-        }
-        else
-        {
-            <p>Submit</p>
-        }
-    </button>
-</EditForm>
-
+        <div class="form-group">
+            <label for="Text">Text:</label>
+            <BlazoredTextEditor @ref="@QuillHtml">
+                <ToolbarContent>
+                    <select class="ql-header">
+                        <option selected=""></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5"></option>
+                    </select>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                    </span>
+                </ToolbarContent>
+                <EditorContent>
+                </EditorContent>
+            </BlazoredTextEditor>
+            <ValidationMessage For="@(() => formData.Text)"/>
+        </div>
+        <div>
+            Upload video:
+            <InputFile accept=".mp4,.mpeg,.avi,.mov,.wmv" multiple="true" OnChange="VideosUpload"></InputFile>
+        </div>
+        <div>
+            Upload image:
+            <InputFile accept=".jpg,.jpeg,.png,.gif,.bmp" multiple="true" OnChange="ImagesUpload"></InputFile>
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="() => HandleValidSubmit()" disabled="@isSubmitting">
+            @if (isSubmitting)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <p>Submitting...</p>
+            }
+            else
+            {
+                <p>Submit</p>
+            }
+        </button>
+    </EditForm>
+}
 @code {
 
     private class FormData
@@ -96,57 +98,56 @@
 
     private async Task HandleValidSubmit()
     {
-        var filenames = await UploadFiles();
+        var files = await UploadFiles();
         var story = new Story()
         {
             Name = formData.Name,
             Text = await QuillHtml.GetHTML(),
-            Media = filenames.Select(m => new Media
-            {
-                Filename = m
-            }).ToList()
+            Media = files.ToList()
         };
         await _storyRepository.Create(story);
         formSubmitted = true;
     }
 
-    private async Task<IEnumerable<string>> UploadFiles()
+    private async Task<IEnumerable<Media>> UploadFiles()
     {
         if (isSubmitting)
         {
-        // Submission is already in progress, do not proceed
-            return new List<string>();
+            return new List<Media>();
         }
 
-        // Set the flag to indicate submission is in progress
         isSubmitting = true;
-        var filename = await SaveFiles( formData.ImageFiles );
-        // Access form data, including the uploaded file (formData.File)
-        // Handle the submission logic, e.g., save to the database or process the file
-        Console.WriteLine($"Name: {formData.Name}, Text: {formData.Text}");
+        var images = await SaveFiles( formData.ImageFiles, MediaType.Image );
+        var videos = await SaveFiles(formData.VideoFiles, MediaType.Video);
         isSubmitting = false;
-        return filename;
+        return images.Concat(videos);
     }
 
-    private async Task<IEnumerable<string>> SaveFiles(IEnumerable<IBrowserFile> files)
+    private async Task<IEnumerable<Media>> SaveFiles(IEnumerable<IBrowserFile> files, MediaType mediaType)
     {
     // Specify the path where you want to save the file on the server
-        var uploadsFolder = Path.Combine("wwwroot", "uploads"); // adjust as needed
-        var filenames = new List<string>();
+        var uploadsFolder = Path.Combine("wwwroot", "uploads", mediaType.ToString()); // adjust as needed
+        var filenames = new List<Media>();
         foreach (var file in files)
         {
+            if (file.Size >= 1937896)
+                throw new Exception("File too large.");
             var fileName = $"{Guid.NewGuid()}_{file.Name}";
             var filePath = Path.Combine(uploadsFolder, fileName);
 
-    // Create the uploads folder if it doesn't exist
+            // Create the uploads folder if it doesn't exist
             Directory.CreateDirectory(uploadsFolder);
-    // Copy the file content to the server
+            // Copy the file content to the server
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.OpenReadStream().CopyToAsync(stream);
             }
 
-            filenames.Add("uploads/" + fileName);
+            filenames.Add(new Media
+            {
+                Filename = $"uploads/{mediaType}/" + fileName,
+                Type = mediaType
+            });
         }
         return filenames;
     }

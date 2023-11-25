@@ -1,0 +1,7 @@
+﻿services:
+  joy-memorial:
+    image: joy-memorial
+    build:
+      context: .
+      dockerfile: joy-memorial/Dockerfile
+ 

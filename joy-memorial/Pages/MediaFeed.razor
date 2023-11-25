@@ -1,0 +1,40 @@
+@using joy_database.Repositories
+@using joy_database.Models
+@using Ganss.Xss
+@page "/mediafeed"
+@using Blazored.Video
+@using Blazored.Video.Support
+@inject MediaRepository MediaRepository 
+
+<h3>Media Feed</h3>
+
+    @foreach (var media in medias)
+    {
+        <div class="story-text">
+            @if (media.Type == MediaType.Image)
+            {
+                <img src="@media.Filename"/>
+            }
+            else if (media.Type == MediaType.Video)
+            {
+                <BlazoredVideo
+                    controls="controls">
+                    <source src="@media.Filename" type="video/mp4"/>
+                </BlazoredVideo>
+            }
+        </div>
+    }
+
+@code {
+    private List<Media> medias;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetMedias();
+    }
+
+    private async Task GetMedias()
+    {
+        medias = await MediaRepository.GetAllApprovedMedia();
+    }
+}

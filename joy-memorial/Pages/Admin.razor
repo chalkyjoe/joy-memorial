@@ -2,6 +2,9 @@
 @using joy_database.Models
 @using Ganss.Xss
 @page "/admin"
+@attribute [Authorize(Roles="Admin")]
+@using Blazored.Video
+@using Blazored.Video.Support
 @inject StoryRepository StoryRepository
 
 <h3>Story Feed</h3>
@@ -17,7 +20,17 @@
             @((MarkupString)new HtmlSanitizer().Sanitize(story.Text))
             @foreach (var media in story.Media)
             {
-                <img src="@media.Filename" height="300" width="300"/>
+                @if (media.Type == MediaType.Image)
+                {
+                    <img src="@media.Filename" height="300" />
+                } else if (media.Type == MediaType.Video)
+                {
+                    <BlazoredVideo 
+                                   style="height:300px;"
+                                   controls="controls">
+                        <source src="@media.Filename" type="video/mp4" />
+                    </BlazoredVideo>
+                }
             }
         </div>
     </div>
