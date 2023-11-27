@@ -3,5 +3,24 @@
     image: joy-memorial
     build:
       context: .
-      dockerfile: joy-memorial/Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__YourDbConnection: "Server=db,1433;Database=your_database_name;User Id=sa;Password=${SA_PASSWORD}"
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SA_PASSWORD: peninsulated96
+      target: build-env
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      ACCEPT_EULA: Y
+    ports:
+      - "1433:1433"
  
