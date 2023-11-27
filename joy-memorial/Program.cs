@@ -25,7 +25,9 @@ builder.Services.AddScoped<StoryRepository>();
 builder.Services.AddScoped<MediaRepository>();
 
 var app = builder.Build();
-var scope = app.Services.CreateScope();
+using var scope = app.Services.CreateScope();
+var appDb =scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+await appDb.Database.MigrateAsync();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
