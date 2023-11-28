@@ -10,7 +10,7 @@
       - db
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=your_database_name;User Id=sa;Password=${SA_PASSWORD}"
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=joymem;User Id=sa;Password=peninsulated96"
   db:
     build:
       context: .
