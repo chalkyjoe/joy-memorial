@@ -1,0 +1,53 @@
+@page "/"
+@using joy_database.Repositories
+@using joy_database.Models
+@using Ganss.Xss
+@using System.Linq
+@inject CategoryRepository categoryRepository
+<div class="banner">
+    <img src="uploads/categories/pika.png" class="banner-image"/>
+    <img src="uploads/categories/joy.jpg" class="banner-image"/>
+    <img src="uploads/categories/pika2.png" class="banner-image"/>
+</div>
+<div class="mainContent">
+    <h3 class="category-header">Disclaimer</h3>
+    <div class="disclaimer">
+        <p>This website is the private archive of Yusuf who you might know as Joy or Marcije. It is here for loved ones to be able to explore and contribute to. Before you do so please take a moment to read the following.</p>
+
+        <p>This site is intended to be a closed and private archive. Our friend never wanted their image to get into the wrong hands and neither do his loved ones, so please don't share anything from this site to social media or elsewhere.</p>
+
+        <p>Please be respectful of what you choose to share and understand that not everything submitted will neccserily be published on the site - you can also choose to share content directly with their family without it being published.</p>
+
+        <p>Joy/Yusuf lived many lives and we welcome writing, images, videos and audio from all of them. Some aspects of their life might be alien to those who only knew them in another - but we hope this archive can serve as place to learn more about them and carry on their legacy.</p>
+    </div>
+    <div class="category-container">
+        @foreach (var category in _categories)
+        {
+            <h2 class="category-header">@category.Name</h2>
+            <a class="category" href="feed/@category.Id">
+                <div class="category-image">
+                    <img src="@category.ImageUrl"/>
+                </div>
+                <div class="category-text">
+                    @((MarkupString)new HtmlSanitizer().Sanitize(category.Text))
+                    <div class="category-stats">
+                        <div><span class="oi oi-book"></span>@category.Stories.Count(m => !string.IsNullOrEmpty(m.Text) Stories</div>
+                        <div><span class="oi oi-image"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Image)) Photos</div>
+                        <div><span class="oi oi-video"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Video)) Videos</div>
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</div>
+
+@code {
+
+    private List<Category> _categories;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _categories = await categoryRepository.GetAllIncludingStories();
+    }
+
+}

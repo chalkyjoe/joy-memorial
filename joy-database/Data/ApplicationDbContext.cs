@@ -8,6 +8,7 @@ public class ApplicationDbContext : IdentityDbContext
 {
     public DbSet<Story> Stories { get; set; }
     public DbSet<Media> Media { get; set; }
+    public DbSet<Category> Category { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -21,6 +22,10 @@ public class ApplicationDbContext : IdentityDbContext
             .HasKey(m => m.Id);
         builder.Entity<Story>()
             .HasMany(m => m.Media);
+        builder.Entity<Story>()
+            .HasOne<Category>(m => m.Category);
+        builder.Entity<Category>()
+            .HasKey(m => m.Id);
         base.OnModelCreating(builder);
     }
 }

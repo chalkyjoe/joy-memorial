@@ -1,13 +1,13 @@
-﻿@page "/"
-@using joy_database.Repositories
+﻿@using joy_database.Repositories
 @using joy_database.Models
 @using Ganss.Xss
-@page "/feed"
+@page "/feed/{CategoryId:guid}"
 @using Blazored.Video
 @using Blazored.Video.Support
 @inject StoryRepository StoryRepository
+@inject CategoryRepository CategoryRepository
 
-<h3>Story Feed</h3>
+<h3>@category.Name</h3>
 
 @foreach (var story in stories)
 {
@@ -18,30 +18,38 @@
         </div>
         <div class="story-text">
             @((MarkupString)new HtmlSanitizer().Sanitize(story.Text))
+        </div>
+        <div class="story-media">
             @foreach (var media in story.Media)
             {
                 @if (media.Type == MediaType.Image)
                 {
-                    <img src="@media.Filename" height="300" width="300"/>
-                } else if (media.Type == MediaType.Video)
+                    <img src="@media.Filename" class="story-image"/>
+                }
+                else if (media.Type == MediaType.Video)
                 {
-                    <BlazoredVideo 
-                                   style="height:300px;"
-                                   controls="controls">
-                        <source src="@media.Filename" type="video/mp4" />
+                    <BlazoredVideo
+                        class="story-image"
+                        controls="controls">
+                        <source src="@media.Filename" type="video/mp4"/>
                     </BlazoredVideo>
                 }
             }
-
         </div>
     </div>
 }
 
 @code {
     private List<Story> stories;
+    private Category category;
+
+    [Parameter]
+    public Guid CategoryId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        stories = await StoryRepository.GetAllApproved();
+        category = await CategoryRepository.Get(CategoryId);
+        stories = await StoryRepository.GetAllApproved(CategoryId);
     }
+
 }

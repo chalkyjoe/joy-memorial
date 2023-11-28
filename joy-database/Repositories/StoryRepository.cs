@@ -21,9 +21,9 @@ public class StoryRepository
         return _dbContext.SaveChangesAsync();
     }
 
-    public Task<List<Story>> GetAllApproved()
+    public Task<List<Story>> GetAllApproved(Guid categoryId)
     {
-        var stories = _dbContext.Stories.Include(m => m.Media).Where(m => m.Approved).ToListAsync();
+        var stories = _dbContext.Stories.Include(m => m.Media).Where(m => m.Approved && m.CategoryId == categoryId).ToListAsync();
         return stories;
     }
 

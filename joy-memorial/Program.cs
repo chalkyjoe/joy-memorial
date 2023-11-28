@@ -1,4 +1,5 @@
 using joy_database.Data;
+using joy_database.Models;
 using joy_database.Repositories;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    //options.UseSqlServer(connectionString));
+    options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
@@ -23,6 +25,7 @@ builder.Services
 builder.Services.AddScoped<ApplicationDbContext>();
 builder.Services.AddScoped<StoryRepository>();
 builder.Services.AddScoped<MediaRepository>();
+builder.Services.AddScoped<CategoryRepository>();
 
 var app = builder.Build();
 using var scope = app.Services.CreateScope();
@@ -74,6 +77,7 @@ if (user == null)
     {
         UserName = "admin@example.com",
         Email = "admin@example.com",
+        EmailConfirmed = true
     };
     await userManager.CreateAsync(user, "Admin@123");
 }
