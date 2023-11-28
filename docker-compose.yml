@@ -14,13 +14,10 @@
   db:
     build:
       context: .
-      dockerfile: Dockerfile
-      args:
-        SA_PASSWORD: peninsulated96
-      target: build-env
     image: mcr.microsoft.com/mssql/server
     environment:
       ACCEPT_EULA: Y
+      SA_PASSWORD: peninsulated96
     ports:
       - "1433:1433"
  
