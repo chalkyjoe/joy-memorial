@@ -12,7 +12,7 @@ html, body {
 }
 .banner-image {
     border-radius: 5%;
-    width: 350px;
+    height: 350px;
 }
 .disclaimer {
     padding: 1rem;

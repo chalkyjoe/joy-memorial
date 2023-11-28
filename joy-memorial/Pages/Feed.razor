@@ -6,38 +6,39 @@
 @using Blazored.Video.Support
 @inject StoryRepository StoryRepository
 @inject CategoryRepository CategoryRepository
+<div class="mainContent">
+    <h3>@category.Name</h3>
 
-<h3>@category.Name</h3>
-
-@foreach (var story in stories)
-{
-    <div class="story">
-        <div class="story-header">
-            <strong>@story.Name</strong>
-            <div>@story.Created.ToString("dd/MM/yyyy")</div>
-        </div>
-        <div class="story-text">
-            @((MarkupString)new HtmlSanitizer().Sanitize(story.Text))
-        </div>
-        <div class="story-media">
-            @foreach (var media in story.Media)
-            {
-                @if (media.Type == MediaType.Image)
+    @foreach (var story in stories)
+    {
+        <div class="story">
+            <div class="story-header">
+                <strong>@story.Name</strong>
+                <div>@story.Created.ToString("dd/MM/yyyy")</div>
+            </div>
+            <div class="story-text">
+                @((MarkupString)new HtmlSanitizer().Sanitize(story.Text))
+            </div>
+            <div class="story-media">
+                @foreach (var media in story.Media)
                 {
-                    <img src="@media.Filename" class="story-image"/>
+                    @if (media.Type == MediaType.Image)
+                    {
+                        <img src="@media.Filename" class="story-image"/>
+                    }
+                    else if (media.Type == MediaType.Video)
+                    {
+                        <BlazoredVideo
+                            class="story-image"
+                            controls="controls">
+                            <source src="@media.Filename" type="video/mp4"/>
+                        </BlazoredVideo>
+                    }
                 }
-                else if (media.Type == MediaType.Video)
-                {
-                    <BlazoredVideo
-                        class="story-image"
-                        controls="controls">
-                        <source src="@media.Filename" type="video/mp4"/>
-                    </BlazoredVideo>
-                }
-            }
+            </div>
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
     private List<Story> stories;
