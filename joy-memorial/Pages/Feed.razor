@@ -41,8 +41,8 @@
 </div>
 
 @code {
-    private List<Story> stories;
-    private Category category;
+    private List<Story> stories = new List<Story>();
+    private Category category = new Category();
 
     [Parameter]
     public Guid CategoryId { get; set; }

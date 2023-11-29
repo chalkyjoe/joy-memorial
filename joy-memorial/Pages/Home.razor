@@ -20,33 +20,36 @@
 
         <p>Joy/Yusuf lived many lives and we welcome writing, images, videos and audio from all of them. Some aspects of their life might be alien to those who only knew them in another - but we hope this archive can serve as place to learn more about them and carry on their legacy.</p>
     </div>
-    <div class="category-container">
-        @foreach (var category in _categories)
-        {
-            <h2 class="category-header">@category.Name</h2>
-            <a class="category" href="feed/@category.Id">
                 <AuthorizeView>
                     <Authorized>
-                        @if (context.User.IsInRole("Admin"))
+                        @if (context.User.IsInRole("Privileged"))
                         {
-                            <a href="category/edit/@category.Id" class="category-edit"><span class="oi oi-pencil"></span></a>
+                            <div class="category-container">
+                                @foreach (var category in _categories)
+                                {
+                                    <h2 class="category-header">@category.Name</h2>
+                                    <a class="category" href="feed/@category.Id">
+                                        @if (context.User.IsInRole("Admin"))
+                                        {
+                                            <a href="category/edit/@category.Id" class="category-edit"><span class="oi oi-pencil"></span></a>
+                                        }
+                                        <div class="category-image">
+                                            <img src="@category.ImageUrl"/>
+                                        </div>
+                                        <div class="category-text">
+                                            @((MarkupString)new HtmlSanitizer().Sanitize(category.Text))
+                                            <div class="category-stats">
+                                                <div><span class="oi oi-book"></span>@category.Stories.Count(m => m.Text != "<p><br></p>") Stories</div>
+                                                <div><span class="oi oi-image"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Image)) Photos</div>
+                                                <div><span class="oi oi-video"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Video)) Videos</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
                         }
                     </Authorized>
                 </AuthorizeView>
-                <div class="category-image">
-                    <img src="@category.ImageUrl"/>
-                </div>
-                <div class="category-text">
-                    @((MarkupString)new HtmlSanitizer().Sanitize(category.Text))
-                    <div class="category-stats">
-                        <div><span class="oi oi-book"></span>@category.Stories.Count(m => m.Text != "<p><br></p>") Stories</div>
-                        <div><span class="oi oi-image"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Image)) Photos</div>
-                        <div><span class="oi oi-video"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Video)) Videos</div>
-                    </div>
-                </div>
-            </a>
-        }
-    </div>
 </div>
 
 @code {

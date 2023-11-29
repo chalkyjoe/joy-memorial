@@ -13,7 +13,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-    //options.UseSqlite(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -58,31 +57,53 @@ app.MapFallbackToPage("/_Host");
 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-string roleName = "Admin";
-IdentityResult roleResult;
+
+async Task<string> CreateRole(string roleName)
+{
+    IdentityResult roleResult;
 
 // Check if the role exists, create it if not
-var roleExist = await roleManager.RoleExistsAsync(roleName);
-if (!roleExist)
-{
-    // Create the role
-    roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+    var roleExist = await roleManager.RoleExistsAsync(roleName);
+    if (!roleExist)
+    {
+        // Create the role
+        roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+    }
+
+    return roleName;
 }
 
-// Create an admin user
-IdentityUser user = await userManager.FindByEmailAsync("admin@example.com");
+var adminRoleName = await CreateRole("Admin");
+var privilegedRoleName = await CreateRole("Privileged");
 
-if (user == null)
+// Create an admin user
+IdentityUser adminUser = await userManager.FindByEmailAsync("admin@example.com");
+
+if (adminUser == null)
 {
-    user = new IdentityUser()
+    adminUser = new IdentityUser()
     {
         UserName = "admin@example.com",
         Email = "admin@example.com",
         EmailConfirmed = true
     };
-    await userManager.CreateAsync(user, "Admin@123");
+    await userManager.CreateAsync(adminUser, "Admin@123");
+}
+
+IdentityUser privilegedUser = await userManager.FindByEmailAsync("user@example.com");
+
+if (privilegedUser == null)
+{
+    privilegedUser = new IdentityUser
+    {
+        UserName = "user@example.com",
+        Email = "user@example.com",
+        EmailConfirmed = true
+    };
+    await userManager.CreateAsync(privilegedUser, "User@123");
 }
 
 // Assign the admin user to the Admin role
-await userManager.AddToRoleAsync(user, roleName);
+await userManager.AddToRoleAsync(adminUser, adminRoleName);
+await userManager.AddToRoleAsync(privilegedUser, privilegedRoleName);
 app.Run();

@@ -1,7 +1,7 @@
 services:
   joy-memorial:
     environment:
-      ConnectionStrings__DefaultConnection: "Server=sql_server2022;Database=master;User Id=SA;Password=Peninsulated96;MultipleActiveResultSets=true;Persist Security Info=False;Encrypt=False"
+      ConnectionStrings__DefaultConnection: "Server=sql_server2022;Database=master;User Id=SA;Password=Peninsulated96%;MultipleActiveResultSets=true;Persist Security Info=False;Encrypt=False"
   sql:
     environment:
-      SA_PASSWORD: Peninsulated96
+      SA_PASSWORD: Peninsulated96%
