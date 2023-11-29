@@ -5,9 +5,9 @@
 @using System.Linq
 @inject CategoryRepository categoryRepository
 <div class="banner">
-    <img src="uploads/categories/pika.png" class="banner-image"/>
-    <img src="uploads/categories/joy.jpg" class="banner-image"/>
-    <img src="uploads/categories/pika2.png" class="banner-image"/>
+    <img src="images/pika.png" class="banner-image"/>
+    <img src="images/joy.jpg" class="banner-image"/>
+    <img src="images/pika2.png" class="banner-image"/>
 </div>
 <div class="mainContent">
     <h3 class="category-header">Disclaimer</h3>
@@ -25,6 +25,14 @@
         {
             <h2 class="category-header">@category.Name</h2>
             <a class="category" href="feed/@category.Id">
+                <AuthorizeView>
+                    <Authorized>
+                        @if (context.User.IsInRole("Admin"))
+                        {
+                            <a href="category/edit/@category.Id" class="category-edit"><span class="oi oi-pencil"></span></a>
+                        }
+                    </Authorized>
+                </AuthorizeView>
                 <div class="category-image">
                     <img src="@category.ImageUrl"/>
                 </div>

@@ -3,6 +3,7 @@
 @using joy_database.Repositories
 @using System.ComponentModel.DataAnnotations
 
+@attribute [Authorize(Roles="Admin")]
 @inject CategoryRepository _categoryRepository
 
 
@@ -10,7 +11,7 @@
 
 @if (formSubmitted)
 {
-    <p>Story submitted successfully!</p>
+    <p>Category submitted successfully!</p>
 }
 else
 {

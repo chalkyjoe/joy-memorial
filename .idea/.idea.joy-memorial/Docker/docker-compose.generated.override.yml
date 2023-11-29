@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  joy-memorial:
+    entrypoint:
+    - "/riderDebugger/linux-x64/dotnet/dotnet"
+    - "/riderDebugger/JetBrains.Debugger.Worker.exe"
+    - "--mode=server"
+    - "--frontend-port=57100"
+    - "--backend-port=57300"
+    environment:
+      RIDER_DEBUGGER_LOG_DIR: "/riderLogs"
+      RESHARPER_LOG_CONF: "/riderLogsConf/backend-log.xml"
+    ports:
+    - "127.0.0.1:57000:57100"
+    - "127.0.0.1:57200:57300"
+    volumes:
+    - "C:\\Users\\Jack.Hoyle\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2023.2.3\\\
+      Linux64:/riderDebugger"
+    - "C:\\Program Files\\JetBrains\\JetBrains Rider 2023.2.2/bin:/riderLogsConf"
+    - "C:\\Users\\Jack.Hoyle\\AppData\\Local\\JetBrains\\Rider2023.2\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2023_11_29_13_25_11:/riderLogs:rw"

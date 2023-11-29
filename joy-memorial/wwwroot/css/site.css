@@ -30,7 +30,16 @@ html, body {
     text-decoration: none;
     color: #333;
     transition: all .2s ease-in-out;
-    height: 450px;
+    height: 100%;
+    position: relative;
+}
+.category-edit {
+    padding: .5rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: hsla(0, 0%, 100%, 0.5);
+    z-index: 9999;
 }
 .category-header {
     border-bottom: 1px solid black;

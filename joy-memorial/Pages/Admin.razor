@@ -46,7 +46,9 @@
 
     private async Task GetStories()
     {
-        stories = await StoryRepository.GetAllUnApproved();
+        var tempStories = await StoryRepository.GetAllUnApproved();
+        if (tempStories != null)
+            stories = tempStories;
     }
 
     private async Task Approve(Story story)

@@ -8,8 +8,11 @@
       - "5000:80"
     depends_on:
       - sql
+    volumes:
+      - './wwwroot/uploads:/app/wwwroot/uploads/'
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=sql_server2022;Database=master;User Id=SA;Password=peninsulated96;MultipleActiveResultSets=true;Persist Security Info=False;Encrypt=False"
   sql:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     container_name: sql_server2022
@@ -17,6 +20,6 @@
       - "1433:1433" 
     environment:
       - ACCEPT_EULA=y
-      - SA_PASSWORD=Peninsulated96%
+      - SA_PASSWORD=peninsulated96
       
  
