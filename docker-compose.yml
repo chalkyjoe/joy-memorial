@@ -5,19 +5,18 @@
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "80:5000"
     depends_on:
-      - db
+      - sql
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=joymem;User Id=sa;Password=peninsulated96"
-  db:
-    build:
-      context: .
-    image: mcr.microsoft.com/mssql/server
+  sql:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server2022
+    ports: # not actually needed, because the two services are on the same network
+      - "1433:1433" 
     environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: peninsulated96
-    ports:
-      - "1433:1433"
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=Peninsulated96%
+      
  

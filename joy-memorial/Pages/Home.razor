@@ -43,11 +43,13 @@
 
 @code {
 
-    private List<Category> _categories;
+    private List<Category> _categories = new List<Category>();
 
     protected async override Task OnInitializedAsync()
     {
-        _categories = await categoryRepository.GetAllIncludingStories();
+        var categories = await categoryRepository.GetAllIncludingStories();
+        if (categories != null)
+            _categories = categories;
     }
 
 }
