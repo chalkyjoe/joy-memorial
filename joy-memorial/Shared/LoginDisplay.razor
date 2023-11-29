@@ -1,6 +1,11 @@
 ﻿<AuthorizeView>
     <Authorized>
         <a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
+        @if (context.User.IsInRole("Admin"))
+        {
+            <a href="category/create">Create Categories</a>
+            <a href="admin">Admin</a>
+        }
         <form method="post" action="Identity/Account/Logout">
             <button type="submit" class="nav-link btn btn-link">Log out</button>
         </form>
