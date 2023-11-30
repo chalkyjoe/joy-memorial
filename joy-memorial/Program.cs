@@ -105,5 +105,6 @@ if (privilegedUser == null)
 
 // Assign the admin user to the Admin role
 await userManager.AddToRoleAsync(adminUser, adminRoleName);
+await userManager.AddToRoleAsync(adminUser, privilegedRoleName);
 await userManager.AddToRoleAsync(privilegedUser, privilegedRoleName);
 app.Run();

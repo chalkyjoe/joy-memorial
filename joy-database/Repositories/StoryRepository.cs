@@ -23,13 +23,13 @@ public class StoryRepository
 
     public Task<List<Story>> GetAllApproved(Guid categoryId)
     {
-        var stories = _dbContext.Stories.Include(m => m.Media).Where(m => m.Approved && m.CategoryId == categoryId).ToListAsync();
+        var stories = _dbContext.Stories.Include(m => m.Media).Include(m => m.Category).Where(m => m.Approved && m.CategoryId == categoryId).ToListAsync();
         return stories;
     }
 
     public Task<List<Story>> GetAllUnApproved()
     {
-        var stories = _dbContext.Stories.Include(m => m.Media).Where(m => !m.Approved).ToListAsync();
+        var stories = _dbContext.Stories.Include(m => m.Media).Include(m => m.Category).Where(m => !m.Approved).ToListAsync();
         return stories;
     }
 

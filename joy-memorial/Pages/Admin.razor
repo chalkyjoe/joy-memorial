@@ -2,7 +2,7 @@
 @using joy_database.Models
 @using Ganss.Xss
 @page "/admin"
-@attribute [Authorize(Roles="Admin")]
+@attribute [Authorize(Roles = "Admin")]
 @using Blazored.Video
 @using Blazored.Video.Support
 @inject StoryRepository StoryRepository
@@ -14,6 +14,9 @@
     <div class="story">
         <div class="story-header">
             <strong>@story.Name</strong>
+            <div>
+                @story.Category.Name
+            </div>
         </div>
         <div class="story-text">
             <button class="btn-approve btn-success" @onclick="() => Approve(story)">✅</button>
@@ -22,13 +25,14 @@
             {
                 @if (media.Type == MediaType.Image)
                 {
-                    <img src="@media.Filename" height="300" />
-                } else if (media.Type == MediaType.Video)
+                    <img src="@media.Filename" height="300"/>
+                }
+                else if (media.Type == MediaType.Video)
                 {
-                    <BlazoredVideo 
-                                   style="height:300px;"
-                                   controls="controls">
-                        <source src="@media.Filename" type="video/mp4" />
+                    <BlazoredVideo
+                        style="height:300px;"
+                        controls="controls">
+                        <source src="@media.Filename" type="video/mp4"/>
                     </BlazoredVideo>
                 }
             }
@@ -37,7 +41,7 @@
 }
 
 @code {
-    private List<Story> stories;
+    private List<Story> stories = new List<Story>();
 
     protected override async Task OnInitializedAsync()
     {

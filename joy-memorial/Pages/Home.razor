@@ -39,9 +39,9 @@
                                         <div class="category-text">
                                             @((MarkupString)new HtmlSanitizer().Sanitize(category.Text))
                                             <div class="category-stats">
-                                                <div><span class="oi oi-book"></span>@category.Stories.Count(m => m.Text != "<p><br></p>") Stories</div>
-                                                <div><span class="oi oi-image"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Image)) Photos</div>
-                                                <div><span class="oi oi-video"></span>@category.Stories.Sum(m => m.Media.Count(m => m.Type == MediaType.Video)) Videos</div>
+                                                <div><span class="oi oi-book"></span>@category.ApprovedStories.Count(m => m.Text != "<p><br></p>") Stories</div>
+                                                <div><span class="oi oi-image"></span>@category.ApprovedStories.Sum(m => m.Media.Count(m => m.Type == MediaType.Image)) Photos</div>
+                                                <div><span class="oi oi-video"></span>@category.ApprovedStories.Sum(m => m.Media.Count(m => m.Type == MediaType.Video)) Videos</div>
                                             </div>
                                         </div>
                                     </a>

@@ -62,8 +62,9 @@ else
         <div>
             Upload image:
             <InputFile accept=".jpg,.jpeg,.png,.gif,.bmp" OnChange="ImagesUpload"></InputFile>
+            <ValidationMessage For="@(() => formData.ImageFile)"/>
         </div>
-        <button type="button" class="btn btn-primary" @onclick="() => HandleValidSubmit()" disabled="@isSubmitting">
+        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
             @if (isSubmitting)
             {
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -84,8 +85,9 @@ else
         [Required]
         public string Name { get; set; }
 
+        [Required]
         public string Text { get; set; }
-
+        [Required]
         public IBrowserFile ImageFile { get; set; }
     }
 
