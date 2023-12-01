@@ -136,7 +136,7 @@ else
     // Copy the file content to the server
         using (var stream = new FileStream(filePath, FileMode.Create))
         {
-            await file.OpenReadStream().CopyToAsync(stream);
+            await file.OpenReadStream(long.MaxValue).CopyToAsync(stream);
         }
 
         return $"uploads/categories/" + fileName;
