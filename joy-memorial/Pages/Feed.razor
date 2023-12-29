@@ -4,6 +4,7 @@
 @page "/feed/{CategoryId:guid}"
 @using Blazored.Video
 @using Blazored.Video.Support
+@attribute [Authorize(Roles = "Privileged")]
 @inject StoryRepository StoryRepository
 @inject CategoryRepository CategoryRepository
 <div class="mainContent">
@@ -12,6 +13,16 @@
     @foreach (var story in stories)
     {
         <div class="story">
+            <AuthorizeView>
+                <Authorized>
+                    @if (context.User.IsInRole("Admin"))
+                    {
+                        <div class="buttons">
+                            <button class="btn-danger" @onclick="() => Delete(story.Id)"><span class="oi oi-trash"></span></button>
+                        </div>
+                    }
+                </Authorized>
+            </AuthorizeView>
             <div class="story-header">
                 <strong>@story.Name</strong>
                 <div>@story.Created.ToString("dd/MM/yyyy")</div>
@@ -50,6 +61,17 @@
     protected override async Task OnInitializedAsync()
     {
         category = await CategoryRepository.Get(CategoryId);
+        stories = await StoryRepository.GetAllApproved(CategoryId);
+    }
+
+    private async Task Delete(Guid storyId)
+    {
+        var story = stories.FirstOrDefault(m => m.Id == storyId);
+        await StoryRepository.Delete(storyId);
+        foreach (var media in story.Media)
+        {
+            File.Delete(media.Filename);
+        }
         stories = await StoryRepository.GetAllApproved(CategoryId);
     }
 

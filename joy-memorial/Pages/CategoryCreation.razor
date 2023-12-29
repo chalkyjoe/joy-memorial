@@ -1,0 +1,157 @@
+@page "/category/create"
+@using joy_database.Models
+@using joy_database.Repositories
+@using System.ComponentModel.DataAnnotations
+
+@attribute [Authorize(Roles="Admin")]
+@inject CategoryRepository _categoryRepository
+
+
+<h3>Create Category</h3>
+
+@if (formSubmitted)
+{
+    <p>Category submitted successfully!</p>
+}
+else
+{
+    <EditForm Model="@formData" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator/>
+
+        <div class="form-group">
+            <label for="Name">Name:</label>
+            <InputText id="Name" @bind-Value="@formData.Name" class="form-control"/>
+            <ValidationMessage For="@(() => formData.Name)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="Text">Text:</label>
+            <BlazoredTextEditor @ref="@QuillHtml">
+                <ToolbarContent>
+                    <select class="ql-header">
+                        <option selected=""></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5"></option>
+                    </select>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                    </span>
+                </ToolbarContent>
+                <EditorContent>
+                </EditorContent>
+            </BlazoredTextEditor>
+            <div class="validation-message">@textValidation</div>
+        </div>
+        <div>
+            Upload image:
+            <InputFile accept=".jpg,.jpeg,.png,.gif,.bmp" OnChange="ImagesUpload"></InputFile>
+            <ValidationMessage For="@(() => formData.ImageFile)"/>
+        </div>
+        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+            @if (isSubmitting)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <p>Submitting...</p>
+            }
+            else
+            {
+                <p>Submit</p>
+            }
+        </button>
+    </EditForm>
+}
+
+@code {
+
+    private class FormData
+    {
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public IBrowserFile ImageFile { get; set; }
+    }
+
+    public BlazoredTextEditor QuillHtml { get; set; }
+    public bool isSubmitting { get; set; }
+    private FormData formData = new FormData();
+    private bool formSubmitted = false;
+    private string textValidation { get; set; }
+    private async Task HandleValidSubmit()
+    {
+        var text = await QuillHtml.GetText();
+        if ( string.IsNullOrEmpty( text ) || text == "\n" )
+        {
+            textValidation = "Text required.";
+            return;
+        }
+        textValidation = String.Empty;
+        var file = await UploadFile();
+        var category = new Category()
+        {
+            Name = formData.Name,
+            Text = await QuillHtml.GetHTML(),
+            ImageUrl = file
+        };
+        await _categoryRepository.Create(category);
+        formSubmitted = true;
+    }
+
+    private async Task<string> UploadFile()
+    {
+        if (isSubmitting)
+        {
+            return string.Empty;
+        }
+
+        isSubmitting = true;
+        var image = await SaveFiles(formData.ImageFile);
+        isSubmitting = false;
+        return image;
+    }
+
+    private async Task<string> SaveFiles(IBrowserFile file)
+    {
+    // Specify the path where you want to save the file on the server
+        var uploadsFolder = Path.Combine("wwwroot", "uploads", "categories");
+        if (file.Size >= 1937896)
+            throw new Exception("File too large.");
+        var fileName = $"{Guid.NewGuid()}_{file.Name}";
+        var filePath = Path.Combine(uploadsFolder, fileName);
+
+    // Create the uploads folder if it doesn't exist
+        Directory.CreateDirectory(uploadsFolder);
+    // Copy the file content to the server
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream(long.MaxValue).CopyToAsync(stream);
+        }
+
+        return $"uploads/categories/" + fileName;
+    }
+
+
+
+    private void ImagesUpload(InputFileChangeEventArgs obj)
+    {
+        formData.ImageFile = obj.File;
+    }
+
+
+}

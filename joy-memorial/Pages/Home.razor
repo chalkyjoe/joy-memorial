@@ -4,6 +4,8 @@
 @using Ganss.Xss
 @using System.Linq
 @inject CategoryRepository categoryRepository
+@inject NavigationManager _nav
+
 <div class="banner">
     <img src="images/pika.png" class="banner-image"/>
     <img src="images/joy.jpg" class="banner-image"/>
@@ -31,7 +33,9 @@
                                     <a class="category" href="feed/@category.Id">
                                         @if (context.User.IsInRole("Admin"))
                                         {
-                                            <a href="category/edit/@category.Id" class="category-edit"><span class="oi oi-pencil"></span></a>
+                                            <div class="buttons">
+                                                <button @onclick="@(() => _nav.NavigateTo("category/edit/" + category.Id))" class="btn-primary"><span class="oi oi-pencil"></span></button>
+                                            </div>
                                         }
                                         <div class="category-image">
                                             <img src="@category.ImageUrl"/>

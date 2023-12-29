@@ -39,4 +39,9 @@ public class StoryRepository
         _dbContext.Stories.Update(story);
         return _dbContext.SaveChangesAsync();
     }
+
+    public async Task Delete(Guid storyId)
+    {
+        _dbContext.Stories.Where(m => storyId == m.Id).ExecuteDeleteAsync();
+    }
 }

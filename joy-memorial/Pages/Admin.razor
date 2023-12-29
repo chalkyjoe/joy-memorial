@@ -19,7 +19,11 @@
             </div>
         </div>
         <div class="story-text">
-            <button class="btn-approve btn-success" @onclick="() => Approve(story)">✅</button>
+            <div class="buttons">
+                <button class="btn-approve btn-success" @onclick="() => Approve(story)"><span class="oi oi-check"></span></button>
+                <button class="btn-danger" @onclick="() => Delete(story.Id)"><span class="oi oi-trash"></span></button>
+                
+            </div>
             @((MarkupString)new HtmlSanitizer().Sanitize(story.Text))
             @foreach (var media in story.Media)
             {
@@ -59,6 +63,17 @@
     {
         await StoryRepository.Approve(story);
         await GetStories();
+    }
+
+    private async Task Delete(Guid storyId)
+    {
+        var story = stories.FirstOrDefault(m => m.Id == storyId);
+        await StoryRepository.Delete(storyId);
+        foreach (var media in story.Media)
+        {
+            File.Delete("wwwroot/" + media.Filename);
+        }
+        stories = await StoryRepository.GetAllUnApproved();
     }
 
 }

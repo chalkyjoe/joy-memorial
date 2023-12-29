@@ -33,4 +33,10 @@ public class CategoryRepository
     {
         return _dbContext.Category.FirstOrDefaultAsync(m => m.Id == categoryId);
     }
+
+    public async Task Update(Category category)
+    {
+        _dbContext.Category.Update(category);
+        await _dbContext.SaveChangesAsync();
+    }
 }

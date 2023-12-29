@@ -1,4 +1,4 @@
-@page "/category/create"
+@page "/category/edit/{id:guid}"
 @using joy_database.Models
 @using joy_database.Repositories
 @using System.ComponentModel.DataAnnotations
@@ -7,11 +7,11 @@
 @inject CategoryRepository _categoryRepository
 
 
-<h3>Create Category</h3>
+<h3>Edit Category</h3>
 
 @if (formSubmitted)
 {
-    <p>Category submitted successfully!</p>
+    <p>Category changed successfully!</p>
 }
 else
 {
@@ -55,6 +55,7 @@ else
                     </span>
                 </ToolbarContent>
                 <EditorContent>
+                    @((MarkupString)@category.Text)
                 </EditorContent>
             </BlazoredTextEditor>
             <ValidationMessage For="@(() => formData.Text)"/>
@@ -85,27 +86,34 @@ else
         [Required]
         public string Name { get; set; }
 
-        [Required]
         public string Text { get; set; }
-        [Required]
         public IBrowserFile ImageFile { get; set; }
     }
 
+    [Parameter]
+    public Guid Id { get; set; }
+
+    public Category category = new Category();
     public BlazoredTextEditor QuillHtml { get; set; }
     public bool isSubmitting { get; set; }
     private FormData formData = new FormData();
     private bool formSubmitted = false;
+    protected async override Task OnInitializedAsync()
+    {
+        category = await _categoryRepository.Get(Id);
+        formData.Name = category.Name;
+        formData.Text = category.Text;
+    }
 
     private async Task HandleValidSubmit()
     {
-        var file = await UploadFile();
-        var category = new Category()
-        {
-            Name = formData.Name,
-            Text = await QuillHtml.GetHTML(),
-            ImageUrl = file
-        };
-        await _categoryRepository.Create(category);
+        if (formData.ImageFile != null)
+            category.ImageUrl = await UploadFile();
+        category.Name = formData.Name;
+        var text = await QuillHtml.GetText();
+        category.Text = text;
+        
+        await _categoryRepository.Update(category);
         formSubmitted = true;
     }
 
