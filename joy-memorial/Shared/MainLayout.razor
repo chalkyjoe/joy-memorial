@@ -2,9 +2,15 @@
 
 <PageTitle>joy-memorial</PageTitle>
 
-<div class="page">
+
+<div class="flex-column mobile-menu">
+    <span id="menu-icon" class="oi oi-menu" @onclick="ToggleNav"></span>
+</div>
+<div class="page" @onclick="HideNav">
     <main>
-        <div class="top-row px-4 auth">
+
+        <div class="top-row px-4 auth @( HiddenNavClass ? "hidden-nav" : "" )" id="menu">
+
             <LoginDisplay/>
             <a href="/">Home</a>
         </div>
@@ -14,3 +20,24 @@
         </article>
     </main>
 </div>
+
+@code
+{
+    protected override void OnAfterRender( bool firstRender )
+    {
+        base.OnAfterRender( firstRender );
+        HiddenNavClass = true;
+    }
+
+    private bool HiddenNavClass { get; set; } = true;
+
+    void ToggleNav( )
+    {
+        HiddenNavClass = !HiddenNavClass;
+    }
+
+    private void HideNav( )
+    {
+        HiddenNavClass = true;
+    }
+}

@@ -7,7 +7,7 @@
 @attribute [Authorize(Roles = "Privileged")]
 @inject StoryRepository StoryRepository
 @inject CategoryRepository CategoryRepository
-<div class="mainContent">
+<div class="main-content">
     <h3>@category.Name</h3>
 
     @foreach (var story in stories)

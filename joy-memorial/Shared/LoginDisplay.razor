@@ -1,18 +1,18 @@
-﻿<AuthorizeView>
-    <Authorized>
-        <a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
-        <a href="submit">Submit Story</a>
-        @if (context.User.IsInRole("Admin"))
-        {
-            <a href="category/create">Create Categories</a>
-            <a href="admin">Admin</a>
-        }
-        <form method="post" action="Identity/Account/Logout">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
-        </form>
-    </Authorized>
-    <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Log in</a>
-    </NotAuthorized>
-</AuthorizeView>
+﻿    <AuthorizeView>
+        <Authorized>
+            <a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
+            <a href="submit">Submit Story</a>
+            @if ( context.User.IsInRole( "Admin" ) )
+            {
+                <a href="category/create">Create Categories</a>
+                <a href="admin">Admin</a>
+            }
+            <form method="post" action="Identity/Account/Logout">
+                <button type="submit" class="nav-link btn btn-link">Log out</button>
+            </form>
+        </Authorized>
+        <NotAuthorized>
+            <a href="Identity/Account/Register">Register</a>
+            <a href="Identity/Account/Login">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>

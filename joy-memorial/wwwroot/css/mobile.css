@@ -1,0 +1,63 @@
+@media all and (max-width: 650px)
+{
+    .mobile-menu
+    {
+        display: flow;
+        padding: 0.5rem;
+        text-align: right;
+        min-height: 40px;
+    }
+    .hidden-nav
+    {
+        display: none!important;
+    }
+    .auth a, .auth form .btn
+    {
+        text-decoration: none!important;
+        padding: 0 0.5rem!important;
+        margin-right:0!important;
+    }
+    .top-row
+    {
+        background: white;
+        position: absolute;
+        width: 100%;
+        display: flex;
+        height:auto!important;
+        flex-direction: column-reverse!important;
+        align-items: end!important;
+    }
+    .top-row a, .top-row .btn
+    {
+        white-space: pre-wrap!important;
+        margin-left: 0.1rem!important;
+        margin-top: .25rem;
+    }
+    .main-content
+    {
+        width: 100%;
+    }
+    .pika
+    {
+        width:30%!important;
+        height: 30%!important;    
+    }
+    .banner-image
+    {
+        width:50%;
+        height: 50%;
+    }
+    .page
+    {
+        display: inline-block;
+        width: auto;
+    }
+    .category
+    {
+        flex-direction: column;
+    }
+    .category-image, .category-text
+    {
+        width: 100%;
+    }
+}
