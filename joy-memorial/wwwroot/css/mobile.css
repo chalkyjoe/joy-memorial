@@ -5,7 +5,7 @@
         display: flow;
         padding: 0.5rem;
         text-align: right;
-        min-height: 40px;
+        font-size:1.8rem;
     }
     .hidden-nav
     {
@@ -52,7 +52,7 @@
         display: inline-block;
         width: auto;
     }
-    .category
+    .category, .category:nth-child(4)
     {
         flex-direction: column;
     }
