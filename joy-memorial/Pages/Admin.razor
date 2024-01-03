@@ -29,7 +29,7 @@
             {
                 @if (media.Type == MediaType.Image)
                 {
-                    <img src="@media.Filename" height="300"/>
+                    <img src="@media.Filename" height="300" @onclick="( ) => ShowImage(media.Filename)"/>
                 }
                 else if (media.Type == MediaType.Video)
                 {
@@ -42,10 +42,19 @@
             }
         </div>
     </div>
+    <div class="lightbox-container @( ShowLightbox ? "" : "hidden" )">
+        <div class="lightbox-background" @onclick="HideLightbox"></div>
+        <div class="lightbox">
+            <img src="@SelectedImage"/>
+        </div>
+    </div>
+
 }
 
 @code {
     private List<Story> stories = new List<Story>();
+    private string SelectedImage { get; set; }
+    private bool ShowLightbox { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -74,6 +83,17 @@
             File.Delete("wwwroot/" + media.Filename);
         }
         stories = await StoryRepository.GetAllUnApproved();
+    }
+
+    private void ShowImage( string filename )
+    {
+        SelectedImage = filename;
+        ShowLightbox = true;
+    }
+
+    private void HideLightbox( )
+    {
+        ShowLightbox = false;
     }
 
 }

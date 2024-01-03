@@ -6,6 +6,7 @@
         padding: 0.5rem;
         text-align: right;
         font-size:1.8rem;
+        height:60px;
     }
     .hidden-nav
     {
@@ -19,13 +20,13 @@
     }
     .top-row
     {
-        z-index: 99999999999;
+        z-index: 999999999999999999999;
         background: white;
         position: absolute;
         width: 100%;
         display: flex;
-        height:auto!important;
         flex-direction: column-reverse!important;
+        height:auto!important;
         align-items: end!important;
     }
     .top-row a, .top-row .btn
@@ -52,6 +53,7 @@
     {
         display: inline-block;
         width: auto;
+        top: 60px!important;
     }
     .category, .category:nth-child(4)
     {
@@ -60,5 +62,15 @@
     .category-image, .category-text
     {
         width: 100%;
+    }
+    .lightbox
+    {
+        transform: none;
+        left: 0;
+        right: 0;
+    }
+    .lightbox-container img
+    {
+        width: 100%;    
     }
 }

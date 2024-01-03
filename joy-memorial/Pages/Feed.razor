@@ -35,7 +35,7 @@
                 {
                     @if (media.Type == MediaType.Image)
                     {
-                        <img src="@media.Filename" class="story-image"/>
+                        <img src="@media.Filename" class="story-image" @onclick="( ) => ShowImage( media.Filename )" />
                     }
                     else if (media.Type == MediaType.Video)
                     {
@@ -50,11 +50,17 @@
         </div>
     }
 </div>
-
+<div class="lightbox-container @( ShowLightbox ? "" : "hidden" )">
+    <div class="lightbox-background" @onclick="HideLightbox"></div>
+    <div class="lightbox">
+        <img src="@SelectedImage"/>
+    </div>
+</div>
 @code {
     private List<Story> stories = new List<Story>();
     private Category category = new Category();
-
+    private string SelectedImage { get; set; }
+    private bool ShowLightbox { get; set; }
     [Parameter]
     public Guid CategoryId { get; set; }
 
@@ -73,6 +79,17 @@
             File.Delete(media.Filename);
         }
         stories = await StoryRepository.GetAllApproved(CategoryId);
+    }
+
+    private void ShowImage( string filename )
+    {
+        SelectedImage = filename;
+        ShowLightbox = true;
+    }
+
+    private void HideLightbox( )
+    {
+        ShowLightbox = false;
     }
 
 }
