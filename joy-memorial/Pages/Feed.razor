@@ -35,15 +35,19 @@
                 {
                     @if (media.Type == MediaType.Image)
                     {
-                        <img src="@media.Filename" class="story-image" @onclick="( ) => ShowImage( media.Filename )" />
+                        <img src="@media.Filename" class="story-image" @onclick="( ) => ShowMedia( media.Filename, MediaType.Image )" />
                     }
                     else if (media.Type == MediaType.Video)
                     {
-                        <BlazoredVideo
-                            class="story-image"
-                            controls="controls">
-                            <source src="@media.Filename" type="video/mp4"/>
-                        </BlazoredVideo>
+                        <div class="video-container">
+                            <div class="video-overlay" @onclick="() => ShowMedia( media.Filename, MediaType.Video )">
+                                <span class="oi oi-media-play video-icon"></span>
+                            </div>    
+                            <BlazoredVideo
+                                class="story-image">
+                                <source src="@media.Filename" type="video/mp4"/>
+                            </BlazoredVideo>
+                        </div>
                     }
                 }
             </div>
@@ -53,13 +57,22 @@
 <div class="lightbox-container @( ShowLightbox ? "" : "hidden" )">
     <div class="lightbox-background" @onclick="HideLightbox"></div>
     <div class="lightbox">
-        <img src="@SelectedImage"/>
+        @if ( SelectedMediaType == MediaType.Image)
+        {
+            <img src="@SelectedMedia"/>
+        } else if ( SelectedMediaType == MediaType.Video )
+        {
+            <BlazoredVideo controls="controls">
+                <source src="@SelectedMedia" type="video/mp4"/>
+            </BlazoredVideo>
+        }
     </div>
 </div>
 @code {
     private List<Story> stories = new List<Story>();
     private Category category = new Category();
-    private string SelectedImage { get; set; }
+    private string SelectedMedia { get; set; }
+    private MediaType SelectedMediaType { get ; set ; }
     private bool ShowLightbox { get; set; }
     [Parameter]
     public Guid CategoryId { get; set; }
@@ -81,15 +94,20 @@
         stories = await StoryRepository.GetAllApproved(CategoryId);
     }
 
-    private void ShowImage( string filename )
+    private void ShowMedia( string filename, MediaType mediaType )
     {
-        SelectedImage = filename;
+        
+        SelectedMedia = filename;
+        SelectedMediaType = mediaType;
         ShowLightbox = true;
     }
+
 
     private void HideLightbox( )
     {
         ShowLightbox = false;
+        SelectedMediaType = MediaType.None;
+        SelectedMedia = string.Empty;
     }
-
+ 
 }

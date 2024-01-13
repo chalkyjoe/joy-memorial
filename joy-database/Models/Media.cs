@@ -19,5 +19,6 @@ public enum MediaType
     Image,
     Video,
     Audio,
-    Youtube
+    Youtube,
+    None
 }
