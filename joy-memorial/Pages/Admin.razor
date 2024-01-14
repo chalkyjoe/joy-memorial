@@ -38,6 +38,9 @@
                         controls="controls">
                         <source src="@media.Filename" type="video/mp4"/>
                     </BlazoredVideo>
+                } else if ( media.Type == MediaType.Youtube )
+                {
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/@media.Filename" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 }
             }
         </div>

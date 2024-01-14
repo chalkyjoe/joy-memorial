@@ -4,51 +4,62 @@
 @page "/feed/{CategoryId:guid}"
 @using Blazored.Video
 @using Blazored.Video.Support
-@attribute [Authorize(Roles = "Privileged")]
+@attribute [Authorize( Roles = "Privileged" )]
 @inject StoryRepository StoryRepository
 @inject CategoryRepository CategoryRepository
 <div class="main-content">
     <h3>@category.Name</h3>
 
-    @foreach (var story in stories)
+    @foreach ( var story in stories )
     {
         <div class="story">
             <AuthorizeView>
                 <Authorized>
-                    @if (context.User.IsInRole("Admin"))
+                    @if ( context.User.IsInRole( "Admin" ) )
                     {
                         <div class="buttons">
-                            <button class="btn-danger" @onclick="() => Delete(story.Id)"><span class="oi oi-trash"></span></button>
+                            <button class="btn-danger" @onclick="( ) => Delete( story.Id )">
+                                <span class="oi oi-trash"></span>
+                            </button>
                         </div>
                     }
                 </Authorized>
             </AuthorizeView>
             <div class="story-header">
                 <strong>@story.Name</strong>
-                <div>@story.Created.ToString("dd/MM/yyyy")</div>
+                <div>@story.Created.ToString( "dd/MM/yyyy" )</div>
             </div>
             <div class="story-text">
-                @((MarkupString)new HtmlSanitizer().Sanitize(story.Text))
+                @( (MarkupString)new HtmlSanitizer().Sanitize( story.Text ) )
             </div>
             <div class="story-media">
-                @foreach (var media in story.Media)
+                @foreach ( var media in story.Media )
                 {
-                    @if (media.Type == MediaType.Image)
-                    {
-                        <img src="@media.Filename" class="story-image" @onclick="( ) => ShowMedia( media.Filename, MediaType.Image )" />
-                    }
-                    else if (media.Type == MediaType.Video)
-                    {
-                        <div class="video-container">
-                            <div class="video-overlay" @onclick="() => ShowMedia( media.Filename, MediaType.Video )">
+                    <div class="media-container">
+                        @if ( media.Type == MediaType.Image )
+                        {
+                            <img src="@media.Filename" class="story-image" @onclick="( ) => ShowMedia( media.Filename, MediaType.Image )"/>
+                        }
+                        else if ( media.Type == MediaType.Video )
+                        {
+                            <div class="video-overlay" @onclick="( ) => ShowMedia( media.Filename, MediaType.Video )">
                                 <span class="oi oi-media-play video-icon"></span>
-                            </div>    
+                            </div>
                             <BlazoredVideo
                                 class="story-image">
                                 <source src="@media.Filename" type="video/mp4"/>
                             </BlazoredVideo>
-                        </div>
-                    }
+                        }
+                        else if ( media.Type == MediaType.Youtube )
+                        {
+                            <div class="media-container">
+                                <div class="video-overlay" @onclick="( ) => ShowMedia( media.Filename, MediaType.Youtube )">
+                                    <span class="oi oi-media-play video-icon"></span>
+                                </div>
+                                <img class="story-image" src="https://img.youtube.com/vi/@media.Filename/1.jpg">
+                            </div>
+                        }
+                    </div>
                 }
             </div>
         </div>
@@ -57,46 +68,51 @@
 <div class="lightbox-container @( ShowLightbox ? "" : "hidden" )">
     <div class="lightbox-background" @onclick="HideLightbox"></div>
     <div class="lightbox">
-        @if ( SelectedMediaType == MediaType.Image)
+        @if ( SelectedMediaType == MediaType.Image )
         {
             <img src="@SelectedMedia"/>
-        } else if ( SelectedMediaType == MediaType.Video )
+        }
+        else if ( SelectedMediaType == MediaType.Video )
         {
             <BlazoredVideo controls="controls">
                 <source src="@SelectedMedia" type="video/mp4"/>
             </BlazoredVideo>
         }
+        else if ( SelectedMediaType == MediaType.Youtube )
+        {
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/@SelectedMedia" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        }
     </div>
 </div>
+
 @code {
     private List<Story> stories = new List<Story>();
     private Category category = new Category();
     private string SelectedMedia { get; set; }
     private MediaType SelectedMediaType { get ; set ; }
     private bool ShowLightbox { get; set; }
-    [Parameter]
-    public Guid CategoryId { get; set; }
+    [Parameter] public Guid CategoryId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync( )
     {
-        category = await CategoryRepository.Get(CategoryId);
-        stories = await StoryRepository.GetAllApproved(CategoryId);
+        category = await CategoryRepository.Get( CategoryId );
+        stories = await StoryRepository.GetAllApproved( CategoryId );
     }
 
-    private async Task Delete(Guid storyId)
+    private async Task Delete( Guid storyId )
     {
-        var story = stories.FirstOrDefault(m => m.Id == storyId);
-        await StoryRepository.Delete(storyId);
-        foreach (var media in story.Media)
+        var story = stories.FirstOrDefault( m => m.Id == storyId );
+        await StoryRepository.Delete( storyId );
+        foreach ( var media in story.Media )
         {
-            File.Delete(media.Filename);
+            File.Delete( media.Filename );
         }
-        stories = await StoryRepository.GetAllApproved(CategoryId);
+
+        stories = await StoryRepository.GetAllApproved( CategoryId );
     }
 
     private void ShowMedia( string filename, MediaType mediaType )
     {
-        
         SelectedMedia = filename;
         SelectedMediaType = mediaType;
         ShowLightbox = true;
@@ -109,5 +125,6 @@
         SelectedMediaType = MediaType.None;
         SelectedMedia = string.Empty;
     }
- 
+
 }
+

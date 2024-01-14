@@ -250,7 +250,6 @@ a, .btn-link {
     width: 100px;
     height: 100px;
     object-fit: cover;
-    margin: 0 0.5rem;
 }
 
 .ql-container {
@@ -294,11 +293,13 @@ a, .btn-link {
     text-align: center;
 
 }
-.video-container {
+.media-container {
     position: relative;
+    margin: 0 0.5rem;
 }
 .video-overlay {
     display: flex;
+    background-color: hsl(0, 0%, 0%, 0.6);
     width: 100%;
     height: 100%;
     position: absolute;
@@ -306,6 +307,9 @@ a, .btn-link {
     z-index: 99999;
     justify-content: center;
     flex-direction: column;
+}
+.video-overlay:hover {
+    background: hsl(0, 0%, 0%, 0.3);
 }
 .video-icon {
     color: hsl(0, 100%, 100%, 0.2);
@@ -316,5 +320,5 @@ a, .btn-link {
     transition: all .2s ease-in-out;
 }
 .video-overlay:hover .video-icon {
-    color: hsl(0, 100%, 100%, 0.8);
+    color: hsl(0, 100%, 100%);
 }
