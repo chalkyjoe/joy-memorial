@@ -12,6 +12,7 @@ public class Media : DbEntity
     public string Filename { get; set; }
     public bool Approved { get; set; }
     public MediaType Type { get; set; }
+    public string Name { get; set; }
 }
 
 public enum MediaType

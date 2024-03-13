@@ -22,6 +22,10 @@
                     <source src="@media.Filename" type="video/mp4"/>
                 </BlazoredVideo>
             }
+            else if ( media.Type == MediaType.Audio )
+            {
+                <audio controls id="@media.Filename" src="@media.Filename" />
+            }
         </div>
     }
 

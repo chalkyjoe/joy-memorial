@@ -308,6 +308,17 @@ a, .btn-link {
     justify-content: center;
     flex-direction: column;
 }
+.audio-icon {
+    display:block;
+    font-size: 3rem;
+}
+.audio-button
+{
+    height:100px;
+    display: block;
+    width: 100px;
+    font-size: 0.7rem;
+}
 .video-overlay:hover {
     background: hsl(0, 0%, 0%, 0.3);
 }

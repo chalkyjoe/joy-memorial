@@ -74,6 +74,7 @@ else
             </BlazoredTextEditor>
             <ValidationMessage For="@(() => formData.Text)"/>
         </div>
+        <p>Please note, you can select multiple files per media type.</p>
         <div>
             Upload video:
             <InputFile accept=".mp4,.mpeg,.avi,.mov,.wmv" multiple="true" OnChange="VideosUpload"></InputFile>
@@ -81,6 +82,10 @@ else
         <div>
             Upload image:
             <InputFile accept=".jpg,.jpeg,.png,.gif,.bmp" multiple="true" OnChange="ImagesUpload"></InputFile>
+        </div>
+        <div>
+            Upload audio:
+            <InputFile accept=".flac,.mp3,.m4a,.wav,.wma,.aac" multiple="true" OnChange="AudioUpload"></InputFile>
         </div>
         <div>
             Youtube:
@@ -115,6 +120,7 @@ else
 
         public List<IBrowserFile> ImageFiles { get; set; } = new List<IBrowserFile>();
         public List<IBrowserFile> VideoFiles { get; set; } = new List<IBrowserFile>();
+        public List<IBrowserFile> AudioFiles { get; set; } = new List<IBrowserFile>();
     }
 
     private FormData formData = new FormData();
@@ -207,9 +213,10 @@ else
 
         isSubmitting = true;
         var images = await SaveFiles( formData.ImageFiles, MediaType.Image );
-        var videos = await SaveFiles(formData.VideoFiles, MediaType.Video);
+        var videos = await SaveFiles( formData.VideoFiles, MediaType.Video );
+        var audio = await SaveFiles( formData.AudioFiles, MediaType.Audio );
         isSubmitting = false;
-        return images.Concat(videos).ToList();
+        return images.Concat(videos).Concat(audio).ToList();
     }
 
     private async Task<IEnumerable<Media>> SaveFiles(IEnumerable<IBrowserFile> files, MediaType mediaType)
@@ -219,6 +226,7 @@ else
         var filenames = new List<Media>();
         foreach (var file in files)
         {
+            var name = file.Name.Replace( "-", " " ).Replace( "_", " " ); 
             var fileName = $"{Guid.NewGuid()}_{file.Name}";
             var filePath = Path.Combine(uploadsFolder, fileName);
 
@@ -233,7 +241,8 @@ else
             filenames.Add(new Media
             {
                 Filename = $"uploads/{mediaType}/" + fileName,
-                Type = mediaType
+                Type = mediaType,
+                Name = name
             });
         }
         return filenames;
@@ -250,7 +259,11 @@ else
         formData.ImageFiles = new List<IBrowserFile>();
         formData.ImageFiles.AddRange(obj.GetMultipleFiles());
     }
-
+    private void AudioUpload(InputFileChangeEventArgs obj)
+    {
+        formData.AudioFiles = new List<IBrowserFile>();
+        formData.AudioFiles.AddRange( obj.GetMultipleFiles() );
+    }
     public bool isSubmitting { get; set; }
 
 }

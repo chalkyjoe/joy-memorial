@@ -59,6 +59,12 @@
                                 <img class="story-image" src="https://img.youtube.com/vi/@media.Filename/1.jpg">
                             </div>
                         }
+                        else if ( media.Type == MediaType.Audio )
+                        {
+                            <div class="media-container">
+                                <button class="audio-button" @onclick="( ) => ShowMedia(media.Filename, MediaType.Audio )"><span class="audio-icon oi oi-audio-spectrum"></span>@media.Name</button>
+                            </div>
+                        }
                     </div>
                 }
             </div>
@@ -81,6 +87,10 @@
         else if ( SelectedMediaType == MediaType.Youtube )
         {
             <iframe width="560" height="315" src="https://www.youtube.com/embed/@SelectedMedia" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        }
+        else if ( SelectedMediaType == MediaType.Audio )
+        {
+            <audio controls id="@SelectedMedia" src="@SelectedMedia"></audio>
         }
     </div>
 </div>
